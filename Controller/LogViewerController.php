@@ -5,6 +5,7 @@ namespace Cyve\LogViewerBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LogViewerController extends AbstractController
@@ -16,7 +17,7 @@ class LogViewerController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
-        $files = array_map('basename', glob($this->getParameter('kernel.logs_dir').'/'.$this->getParameter('kernel.environment').'*.log'));
+        $files = array_map('basename', glob($this->getParameter('kernel.logs_dir').DIRECTORY_SEPARATOR.$this->getParameter('kernel.environment').'*.log'));
 
         return $this->render('@CyveLogViewer/index.html.twig', ['files' => $files]);
     }
@@ -28,6 +29,14 @@ class LogViewerController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
+        $logDir = $this->getParameter('kernel.logs_dir');
+        $environment = $this->getParameter('kernel.environment');
+        $logFiles = glob($logDir.DIRECTORY_SEPARATOR.$environment.'*.log');
+        $filename = realpath($logDir.DIRECTORY_SEPARATOR.$file);
+        if (!$filename || !in_array($filename, $logFiles)) {
+            throw new NotFoundHttpException();
+        }
+
         $qChannel = $request->query->get('channel');
         $qLevel = $request->query->get('level');
         $qDistinct = $request->query->get('distinct');
@@ -36,7 +45,8 @@ class LogViewerController extends AbstractController
         $channels = [];
         $messages = [];
         $logs = [];
-        $lines = array_reverse(file($this->getParameter('kernel.logs_dir').'/'.$file, FILE_SKIP_EMPTY_LINES));
+
+        $lines = array_reverse(file($filename, FILE_SKIP_EMPTY_LINES));
         foreach ($lines as $line) {
             preg_match('/^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] ([a-z_]+).([A-Z]+): (.*) ([\{|\[].*[\}\]]) (\[\])$/', $line, $matches);
             $date = new \DateTime($matches[1]);
