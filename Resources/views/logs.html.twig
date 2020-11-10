@@ -1,0 +1,74 @@
+{% extends '@EasyAdmin/default/layout.html.twig' %}
+
+{% block content_title %}{{ title }}{% endblock %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        .filters { margin-bottom: 15px; }
+        .log-date,
+        .log-channel { color: #666; }
+        .log-debug .log-icon { border-left: 5px solid #AAA; color: #AAA; }
+        .log-info .log-icon,
+        .log-notice .log-icon { border-left: 5px solid #0CF; color: #0CF; }
+        .log-warning .log-icon { border-left: 5px solid #F93; color: #F93; }
+        .log-error .log-icon,
+        .log-critical .log-icon,
+        .log-alert .log-icon { border-left: 5px solid #F00; color: #F00; }
+        .log-error .log-message,
+        .log-critical .log-message,
+        .log-alert .log-message { color: #F00; }
+        .log-emergency { background-color: #F00; color: #FFF; }
+        .log-emergency .log-icon { border-left: 5px solid #F00; }
+        .log-emergency .log-date,
+        .log-emergency .log-channel { color: #FFF; }
+        .log-emergency .log-message { font-weight: bold; }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="filters">
+        <form class="form-inline" method="GET">
+            <div class="form-group">
+                <select name="channel" class="form-control">
+                    <option value="">All channels</option>
+                    {% for channel in channels %}
+                        <option value="{{ channel }}" {% if app.request.query.get('channel') == channel %}selected="selected"{% endif %}>{{ channel }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <select name="level" class="form-control">
+                    <option value="">All levels</option>
+                    {% for level in levels %}
+                        <option value="{{ level }}" {% if app.request.query.get('level') == level %}selected="selected"{% endif %}>{{ level }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <select name="distinct" class="form-control">
+                    <option value="0" {% if app.request.query.get('distinct') == 0 %}selected="selected"{% endif %}>Every logs</option>
+                    <option value="1" {% if app.request.query.get('distinct') == 1 %}selected="selected"{% endif %}>Distincts</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-default btn-block"><i class="fa fa-filter"></i> Filter</button>
+            </div>
+        </form>
+    </div>
+    <table class="table">
+        <tbody>
+            {% set icons = { debug: 'bug', info: 'info', notice: 'info-circle', warning: 'exclamation-triangle', error: 'exclamation-circle', critical: 'bolt', alert: 'bell', emergency: 'bell' } %}
+            {% for log in logs %}
+                <tr class="log log-{{ log.level }}">
+                    <td class="log-icon"><i class="fa fa-{{ icons[log.level] }}" title="{{ log.level }}"></i></td>
+                    <td class="log-date">{{ log.date|date('Y-m-d H:i:s') }}</td>
+                    <td class="log-channel">{{ log.channel }}</td>
+                    <td class="log-message">{{ log.message }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4">Aucun résultat à afficher</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

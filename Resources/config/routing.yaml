@@ -1,0 +1,3 @@
+cyve_log_viewer:
+    resource: ../../Controller/
+    type: annotation

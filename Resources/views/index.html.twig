@@ -1,0 +1,15 @@
+{% extends '@EasyAdmin/default/layout.html.twig' %}
+
+{% block content_title %}Logs{% endblock %}
+
+{% block main %}
+    {% if files is not empty %}
+        <ul>
+            {% for file in files %}
+                <li>
+                    <a href="{{ path('cyve_log_viewer_logs', { file: file }) }}">{{ file }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{
+    "name": "cyve/logviewer-bundle",
+    "description": "Log viewer bundle for Symfony",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Cyril Vermande",
+            "homepage": "https://www.cyrilwebdesign.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "monolog/monolog": "^1.22|^2.0",
+        "symfony/monolog-bundle": "^3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cyve\\LogViewerBundle\\": ""
+        }
+    }
+}
