@@ -48,7 +48,7 @@ class LogViewerController extends AbstractController
 
         $lines = array_reverse(file($filename, FILE_SKIP_EMPTY_LINES));
         foreach ($lines as $line) {
-            preg_match('/^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] ([a-z_]+).([A-Z]+): (.*) ([\{|\[].*[\}\]]) (\[\])$/', $line, $matches);
+            preg_match('/^\[([0-9- :T\.\+]+)\] ([a-z_]+).([A-Z]+): (.*) ([\{|\[].*[\}\]]) (\[\])$/', $line, $matches);
             $date = new \DateTime($matches[1]);
             $channel = $matches[2];
             $level = strtolower($matches[3]);
