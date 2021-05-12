@@ -17,9 +17,11 @@ class LogViewerController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
-        $files = array_map('basename', glob($this->getParameter('kernel.logs_dir').DIRECTORY_SEPARATOR.$this->getParameter('kernel.environment').'*.log'));
+        $logDir = $this->getParameter('kernel.logs_dir');
+        $environment = $this->getParameter('kernel.environment');
+        $logFiles = glob($logDir.DIRECTORY_SEPARATOR.$environment.'*.log');
 
-        return $this->render('@CyveLogViewer/index.html.twig', ['files' => $files]);
+        return $this->render('@CyveLogViewer/index.html.twig', ['files' => array_map('basename', $logFiles)]);
     }
 
     /**
@@ -32,6 +34,7 @@ class LogViewerController extends AbstractController
         $logDir = $this->getParameter('kernel.logs_dir');
         $environment = $this->getParameter('kernel.environment');
         $logFiles = glob($logDir.DIRECTORY_SEPARATOR.$environment.'*.log');
+
         $filename = realpath($logDir.DIRECTORY_SEPARATOR.$file);
         if (!$filename || !in_array($filename, $logFiles)) {
             throw new NotFoundHttpException();
