@@ -7,22 +7,35 @@
     <style>
         .filters { margin-bottom: 15px; }
         .log-date,
-        .log-channel { color: #666; }
-        .log-debug .log-icon { border-left: 5px solid #AAA; color: #AAA; }
+        .log-channel,
+        .log-context { color: #666; }
+
+        .log-debug { border-left: 5px solid #AAA; }
+        .log-info,
+        .log-notice { border-left: 5px solid #0CF; }
+        .log-warning { border-left: 5px solid #F93; }
+        .log-error,
+        .log-critical,
+        .log-alert { border-left: 5px solid #F00; }
+
+        .log-debug .log-icon { color: #AAA; }
         .log-info .log-icon,
-        .log-notice .log-icon { border-left: 5px solid #0CF; color: #0CF; }
-        .log-warning .log-icon { border-left: 5px solid #F93; color: #F93; }
+        .log-notice .log-icon { color: #0CF; }
+        .log-warning .log-icon { color: #F93; }
         .log-error .log-icon,
-        .log-critical .log-icon,
-        .log-alert .log-icon { border-left: 5px solid #F00; color: #F00; }
         .log-error .log-message,
+        .log-critical .log-icon,
         .log-critical .log-message,
+        .log-alert .log-icon,
         .log-alert .log-message { color: #F00; }
-        .log-emergency { background-color: #F00; color: #FFF; }
-        .log-emergency .log-icon { border-left: 5px solid #F00; }
+
+        .log-emergency { background-color: #F00; border-left: 5px solid #F00; color: #FFF; }
+        .log-emergency .log-icon,
         .log-emergency .log-date,
-        .log-emergency .log-channel { color: #FFF; }
-        .log-emergency .log-message { font-weight: bold; }
+        .log-emergency .log-channel,
+        .log-emergency .log-context { color: #FFF; }
+
+        .log-action .fa { cursor: pointer; }
     </style>
 {% endblock %}
 
@@ -65,6 +78,10 @@
                     <td class="log-date">{{ log.date|date('Y-m-d H:i:s') }}</td>
                     <td class="log-channel">{{ log.channel }}</td>
                     <td class="log-message">{{ log.message }}</td>
+                    <td class="log-action"><i class="fa fa-bars" onclick="document.getElementById('logContext{{ loop.index }}').classList.toggle('d-none');"></i></td>
+                </tr>
+                <tr class="log log-{{ log.level }}">
+                    <td id="logContext{{ loop.index }}" class="log-context d-none" colspan="5">{{ log.context|json_encode }}</td>
                 </tr>
             {% else %}
                 <tr><td colspan="4">Aucun résultat à afficher</td></tr>
